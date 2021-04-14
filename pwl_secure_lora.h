@@ -65,7 +65,7 @@ Notes:
       rolling code.  This will allow for a sender to synchronize with the
       receiver.  This is still secure since an outside party can not tell what
       was in either the original packet nor the response.  If the outside party
-      tries to send either of the encrypted packets that they observed both
+      tries to send either of the encrypted packets that they observed the
       sender will ignore an unsolicited NAK and the receiver might try to send
       an encrypted NAK.
 
@@ -84,7 +84,7 @@ Notes:
     The header described below is pre-pended to the user's send data when the
     packet is transmitted and it is removed from the user's receive data when
     the packet is received.  The source and destination addresses are available
-    for the most recently received packet using the API calls here.
+    for the most recently received packet using the API calls.
 
     Header pre-pended to each packet:
     bits Ofst field description
@@ -100,8 +100,6 @@ Notes:
     16     6  CRC
     ----
     The user's payload goes here.
-    The maximum user payload is 246 bytes if CRC is disabled and 244 bytes if
-    the CRC is enabled.
     ----
 */
 
