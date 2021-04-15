@@ -121,8 +121,8 @@ void loop()
         Serial.print("Received ");
         Serial.print(data_len);
         Serial.print(" bytes from node ");
-        Serial.print(radio_driver.getLastRxSrcAddr(), HEX);
-        Serail.print(".  RSSI: ");
+        Serial.print(radio_driver.pwl_sl_last_rx_src_addr(), HEX);
+        Serial.print(".  RSSI: ");
         Serial.println(radio_driver.get_rssi());
         Serial.println((char*)&radio_data[0]);
     }

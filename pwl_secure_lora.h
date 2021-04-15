@@ -10,7 +10,7 @@
 
 // Timeout and retry values
 #define PWL_SL_SEND_RETRY_LIMIT    3
-#define PWL_SL_ACKWAIT_TIMEOUT_MS  250
+#define PWL_SL_ACKWAIT_TIMEOUT_MS  500
 
 // Care was taken in this code to prevent predictable data in the unencrypted
 // packet.  Arbitrary number(s) used to offset new counters so that encrypted

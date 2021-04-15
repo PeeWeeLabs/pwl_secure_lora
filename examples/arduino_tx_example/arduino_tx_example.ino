@@ -110,7 +110,7 @@ void loop()
     sprintf((char*)radio_data, "Packet Number: %d", x);
 
     rval = radio_driver.pwl_sl_send(THEIR_ADDR, radio_data, strlen((char*)radio_data) + 1);
-    if (rval) Serial.println("Send Error");
+    if (!rval) Serial.println("Send Error");
 
     delay(5000);
 }

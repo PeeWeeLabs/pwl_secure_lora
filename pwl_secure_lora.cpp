@@ -133,6 +133,9 @@ bool PWLSecureLora::pwl_sl_receive(uint8_t* buf, uint8_t* len)
                         *len = (uint8_t)(_rxlength - PWL_SL_HDR_LEN);
                     memcpy(buf, &_buffer[PWL_SL_HDR_LEN], *len);
 
+                    _last_rx_src_addr = PWL_SL_PKT_SRC();
+                    _last_rx_dst_addr = PWL_SL_PKT_DST();
+
                     // If the packet was targeted at us then ACK the packet
                     if (match)
                     {
@@ -148,8 +151,6 @@ bool PWLSecureLora::pwl_sl_receive(uint8_t* buf, uint8_t* len)
                         wait_packet_tx();
                     }
 
-                    _last_rx_src_addr = _buffer[PWL_SL_SRC_ADDR_IDX];
-                    _last_rx_dst_addr = _buffer[PWL_SL_DST_ADDR_IDX];
                     return true;
                 }
                 else
@@ -202,6 +203,7 @@ bool PWLSecureLora::pwl_sl_send(uint8_t dst_addr, const uint8_t* data, uint8_t l
         // Initialize the packet buffer:
         PWL_SL_SET_PKT_RCODE(tgt_rcode);
         _buffer[PWL_SL_FLAGS_RC_IDX] = send_retry_count & PWL_SL_RC_MASK;
+
         _buffer[PWL_SL_SRC_ADDR_IDX] = _our_addr;
         _buffer[PWL_SL_DST_ADDR_IDX] = dst_addr;
         memcpy(&_buffer[PWL_SL_HDR_LEN], data, len);
@@ -218,14 +220,15 @@ bool PWLSecureLora::pwl_sl_send(uint8_t dst_addr, const uint8_t* data, uint8_t l
 
         // Transmit
         send(_buffer, pkt_len);
-        if (no_ack) return true;
         wait_packet_tx(1000);
 
+        if (no_ack) return true;
+
+        set_mode(RFM9X_LORA_MODE_RX_CONTINUOUS);
         ack_timeout = millis() + PWL_SL_ACKWAIT_TIMEOUT_MS;
 
         while (ack_timeout > millis())
         {
-            set_mode(RFM9X_LORA_MODE_RX_CONTINUOUS);
 
             while ( (ack_timeout > millis()) && (!rx_data_ready()) )
             {
@@ -254,8 +257,10 @@ bool PWLSecureLora::pwl_sl_send(uint8_t dst_addr, const uint8_t* data, uint8_t l
                     {
                         tgt_rcode = lrcode;
                         pPeer->their_rcode = lrcode;
+
                         break;
                     }
+
                 }
             }
             else
